@@ -1,0 +1,71 @@
+name: optisigns-scraper
+services:
+- name: scraper
+  source_dir: /task1_3
+  github:
+    repo: Melios22/Daily-Scraping-Protocol  # Updated with your actual GitHub repo
+    branch: main
+    deploy_on_push: true
+  dockerfile_path: Dockerfile
+  
+  # This is a job, not a service
+  instance_count: 1
+  instance_size_slug: basic-xxs  # Smallest instance for cost efficiency
+  
+  # Environment variables
+  envs:
+  - key: BASE_URL
+    value: "https://support.optisigns.com"
+  - key: OUTPUT_DIR
+    value: "scrape_output"
+  - key: PAGES_TO_CRAWL
+    value: "30"
+  - key: HEADLESS
+    value: "true"
+  - key: SORT_METHOD
+    value: "alphabetical"
+  - key: INCREMENTAL_UPDATES
+    value: "true"
+  - key: FORCE_UPDATE_ALL
+    value: "false"
+  - key: TIMEOUT
+    value: "60000"
+  - key: LOG_LEVEL
+    value: "INFO"
+
+# Jobs configuration for scheduled execution
+jobs:
+- name: daily-scraper
+  source_dir: /task1_3
+  github:
+    repo: Melios22/Daily-Scraping-Protocol  # Updated with your actual GitHub repo
+    branch: main
+  dockerfile_path: Dockerfile
+  
+  instance_count: 1
+  instance_size_slug: basic-xxs
+  
+  # Schedule to run once per day at 2 AM UTC
+  kind: CRON
+  schedule: "0 2 * * *"
+  
+  # Environment variables (same as above)
+  envs:
+  - key: BASE_URL
+    value: "https://support.optisigns.com"
+  - key: OUTPUT_DIR
+    value: "optisigns_articles_markdown"
+  - key: PAGES_TO_CRAWL
+    value: "50"
+  - key: HEADLESS
+    value: "true"
+  - key: SORT_METHOD
+    value: "alphabetical"
+  - key: INCREMENTAL_UPDATES
+    value: "true"
+  - key: FORCE_UPDATE_ALL
+    value: "false"
+  - key: TIMEOUT
+    value: "60000"
+  - key: LOG_LEVEL
+    value: "INFO"

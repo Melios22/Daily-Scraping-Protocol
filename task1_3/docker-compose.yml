@@ -1,0 +1,20 @@
+services:
+  optisigns-scraper:
+    build: .
+    container_name: optisigns-scraper
+    environment:
+      - BASE_URL=https://support.optisigns.com
+      - OUTPUT_DIR=scrape_output
+      - PAGES_TO_CRAWL=50
+      - HEADLESS=true
+      - SORT_METHOD=alphabetical
+      - INCREMENTAL_UPDATES=true
+      - FORCE_UPDATE_ALL=false
+      - TIMEOUT=60000
+      - LOG_LEVEL=INFO
+    volumes:
+      # Mount output directories to persist data
+      - ./scrape_output:/app/scrape_output
+      - ./logs:/app/logs
+      - ./artifacts:/app/artifacts
+    restart: "no"  # Don't restart automatically for scheduled jobs
