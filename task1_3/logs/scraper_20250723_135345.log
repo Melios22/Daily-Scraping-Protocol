@@ -1,0 +1,14 @@
+2025-07-23 13:53:45,593 - __main__ - INFO - Starting OptiSigns scraper...
+2025-07-23 13:53:45,595 - __main__ - INFO - Configuration loaded: 50 pages, incremental: True
+2025-07-23 13:57:28,060 - __main__ - INFO - Run artifact saved: artifacts/run_20250723_135728.json
+2025-07-23 13:57:28,064 - __main__ - INFO - ============================================================
+2025-07-23 13:57:28,065 - __main__ - INFO - SCRAPING SUMMARY
+2025-07-23 13:57:28,065 - __main__ - INFO - ============================================================
+2025-07-23 13:57:28,066 - __main__ - INFO - Total execution time: 222.47 seconds
+2025-07-23 13:57:28,067 - __main__ - INFO - Articles added: 50
+2025-07-23 13:57:28,068 - __main__ - INFO - Articles updated: 0
+2025-07-23 13:57:28,068 - __main__ - INFO - Articles skipped: 0
+2025-07-23 13:57:28,069 - __main__ - INFO - Total processed: 50
+2025-07-23 13:57:28,070 - __main__ - INFO - Errors: 0
+2025-07-23 13:57:28,070 - __main__ - INFO - ============================================================
+2025-07-23 13:57:28,071 - __main__ - INFO - Scraping completed successfully!

@@ -60,8 +60,8 @@ AlphaSphere/
 
 1. **Clone and setup the environment:**
    ```bash
-   git clone <repository-url>
-   cd AlphaSphere
+   git clone https://github.com/Melios22/Daily-Scraping-Protocol.git
+   cd Daily-Scraping-Protocol
    ```
 
 2. **Run Task 1 & 3 (Web Scraper):**
@@ -139,7 +139,6 @@ cd task1_3
 **Scheduled Execution**:
 - **Frequency**: Daily at 2 AM UTC
 - **Duration**: 1-2 minutes (incremental updates)
-- **Cost**: ~$5-10/month
 - **Monitoring**: DigitalOcean console + execution artifacts
 
 ### Task 2 - On-Demand Processing
@@ -202,10 +201,11 @@ For comprehensive setup, configuration, and troubleshooting information:
 ## 🔗 Quick Links
 
 ### Task 1 & 3 Production Links
-- **Daily Job Logs**: [DigitalOcean App Console](https://cloud.digitalocean.com/apps/) *(Replace with your specific app URL)*
-- **Execution Artifacts**: Check logs for artifacts output location
-- **Application Dashboard**: [DigitalOcean Apps](https://cloud.digitalocean.com/apps/)
-- **Job Schedule**: Daily at 2 AM UTC as configured in app.yaml
+<!-- - **Daily Job Logs**: [DigitalOcean App Console](https://cloud.digitalocean.com/apps/) *(Replace with your specific app URL)* -->
+- **Daily Job Logs**: [Scrape Logs](task1_3/logs)
+- **Execution Artifacts**: [Artifacts](task1_3/artifacts/)
+<!-- - **Application Dashboard**: [DigitalOcean Apps](https://cloud.digitalocean.com/apps/) -->
+- **Job Schedule**: Daily at 2 AM UTC as configured in [app.yaml](task1_3/.do/app.yaml)
 
 ### Task 2 Resources
 - **OpenAI Dashboard**: [OpenAI Platform](https://platform.openai.com/)
@@ -229,7 +229,7 @@ LOG_LEVEL=INFO
 ```env
 OPENAI_API_KEY=your_openai_api_key
 ASSISTANT_ID=asst_your_assistant_id
-VECTOR_STORE_ID=vs_optional_existing_store_id
+VECTOR_STORE_ID=vs_optional_existing_store_id # Will be created upon first run
 ```
 
 ## 🎯 Results & Impact

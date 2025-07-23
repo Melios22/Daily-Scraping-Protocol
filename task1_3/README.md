@@ -1,19 +1,61 @@
-# OptiSigns Scraper
+# OptiSigns Knowledge Base Scraper
 
-A containerized web scraper for OptiSigns support articles with scheduling capabilities for DigitalOcean Platform.
+An intelligent web scraper that automatically extracts and converts OptiSigns support articles to markdown format. Features incremental updates, comprehensive logging, and production-ready deployment capabilities.
 
-## Features
+## 🎯 Purpose
 
-- 🔄 **Incremental Updates**: Detects new/updated articles using content hashing
-- 📊 **Detailed Logging**: Comprehensive logging with statistics (added, updated, skipped)
-- 🐳 **Dockerized**: Fully containerized for easy deployment
-- ⏰ **Scheduled Execution**: Runs once per day on DigitalOcean
-- 📈 **Run Artifacts**: Saves detailed execution reports
-- 🎯 **Delta Processing**: Only processes new or changed content
+This scraper automates the collection of OptiSigns customer support documentation by:
+- **Discovering** all articles from the support site sidebar navigation
+- **Extracting** clean content and converting to markdown format
+- **Tracking** changes to process only new or updated articles
+- **Organizing** output with consistent naming and metadata
+- **Monitoring** execution with detailed logs and artifacts
 
-## Quick Start
+## 🚀 Key Features
 
-### Local Development
+- **🔄 Incremental Updates**: Smart change detection using content hashing
+- **📊 Detailed Analytics**: Comprehensive tracking of added, updated, and skipped articles
+- **🐳 Production Ready**: Fully containerized with Docker and DigitalOcean deployment
+- **⏰ Scheduled Execution**: Daily automated runs with monitoring
+- **📈 Execution Artifacts**: JSON reports for each run with detailed metrics
+- **🎯 Delta Processing**: Only processes new or changed content for efficiency
+
+## 🏗️ Architecture
+
+```
+main.py              # Entry point with logging, stats, and error handling
+├── scraper.py       # Core scraping logic with browser automation
+├── config.py        # Configuration classes and utility functions
+├── Dockerfile       # Container definition for deployment
+├── docker-compose.yml # Local development environment
+└── .do/app.yaml     # DigitalOcean App Platform specification
+```
+
+## 📁 Output Structure
+
+```
+scrape_output/              # Scraped articles in markdown format
+├── article-title-1.md     # Individual articles with metadata headers
+├── article-title-2.md
+└── processed_articles.json # Tracking log for incremental updates
+
+logs/                       # Application execution logs
+├── scraper_20250123_140530.log
+└── scraper_20250123_150630.log
+
+artifacts/                  # Execution reports and monitoring data
+├── latest.json            # Most recent run details
+├── run_20250123_140530.json
+└── run_20250123_150630.json
+```
+
+## 🛠️ Local Development
+
+### Prerequisites
+- Python 3.8+
+- Docker (optional)
+
+### Quick Start
 
 1. **Install dependencies:**
    ```bash
@@ -26,141 +68,125 @@ A containerized web scraper for OptiSigns support articles with scheduling capab
    python main.py
    ```
 
-### Docker
+3. **Check results:**
+   - Markdown files in `scrape_output/`
+   - Logs in `logs/`
+   - Run artifact in `artifacts/latest.json`
 
-1. **Build and run with Docker:**
-   ```bash
-   docker build -t optisigns-scraper .
-   docker run -v $(pwd)/output:/app/optisigns_articles_markdown optisigns-scraper
-   ```
+### Docker Development
 
-2. **Or use Docker Compose:**
-   ```bash
-   docker-compose up --build
-   ```
+```bash
+# Build and run locally
+docker-compose up --build
 
-## DigitalOcean Deployment
+# Or with Docker directly
+docker build -t optisigns-scraper .
+docker run -v $(pwd)/output:/app/scrape_output optisigns-scraper
+```
 
-### Prerequisites
+## ⚙️ Configuration
 
-1. Install [doctl CLI](https://docs.digitalocean.com/reference/doctl/how-to/install/)
-2. Authenticate: `doctl auth init`
-3. Push code to GitHub repository
-
-### Deploy
-
-1. **Update the GitHub repository URL in `.do/app.yaml`:**
-   ```yaml
-   github:
-     repo: your-username/optisigns-scraper
-     branch: main
-   ```
-
-2. **Deploy using the script:**
-   ```bash
-   chmod +x deploy.sh
-   ./deploy.sh
-   ```
-
-3. **Or deploy manually:**
-   ```bash
-   doctl apps create .do/app.yaml
-   ```
-
-### Monitoring
-
-- **App Dashboard**: https://cloud.digitalocean.com/apps/
-- **Job Logs**: Available in the DigitalOcean console under your app
-- **Run Artifacts**: Check the `/artifacts/latest.json` endpoint
-
-## Configuration
-
-Environment variables can be set in `.do/app.yaml` or locally:
+Configure via environment variables or defaults:
 
 | Variable | Default | Description |
 |----------|---------|-------------|
 | `BASE_URL` | `https://support.optisigns.com` | Target website URL |
 | `OUTPUT_DIR` | `scrape_output` | Output directory for markdown files |
-| `PAGES_TO_CRAWL` | `50` | Maximum number of articles to process |
+| `PAGES_TO_CRAWL` | `30` | Maximum articles to process per run |
 | `HEADLESS` | `true` | Run browser in headless mode |
-| `SORT_METHOD` | `alphabetical` | Article sorting method |
+| `SORT_METHOD` | `alphabetical` | Article sorting: alphabetical, reverse, discovery_order |
 | `INCREMENTAL_UPDATES` | `true` | Enable delta processing |
 | `FORCE_UPDATE_ALL` | `false` | Force update all articles |
-| `LOG_LEVEL` | `INFO` | Logging level |
+| `LOG_LEVEL` | `INFO` | Logging verbosity |
 
-## Architecture
+## 🎯 How It Works
 
-```
-main.py              # Entry point with logging and stats
-├── scraper.py       # Core scraping logic
-├── config.py        # Configuration and utilities
-├── Dockerfile       # Container definition
-├── .do/app.yaml     # DigitalOcean app specification
-└── artifacts/       # Execution reports and logs
-    └── latest.json  # Most recent run details
-```
+### 1. Article Discovery
+- Navigates to the main support page
+- Extracts all article links from sidebar navigation
+- Filters to ensure only article URLs are collected
 
-## Output Structure
+### 2. Incremental Processing
+- Loads previous run tracking data
+- Generates content hash for each article
+- Skips unchanged articles to optimize performance
 
-```
-optisigns_articles_markdown/    # Scraped articles in markdown
-logs/                          # Application logs
-artifacts/                     # Run reports
-├── latest.json               # Latest run details
-└── run_YYYYMMDD_HHMMSS.json # Historical runs
-```
+### 3. Content Extraction
+- Fetches article HTML using Playwright browser automation
+- Cleans content by removing navigation, ads, and metadata
+- Converts to clean markdown format
 
-## Sample Run Artifact
+### 4. Intelligent Tracking
+- Maintains JSON log of processed articles with hashes
+- Tracks new articles, updated content, and skipped items
+- Provides detailed statistics for each run
+
+## 📊 Sample Execution Report
 
 ```json
 {
-  "timestamp": "2025-01-22T10:30:00.123456",
+  "timestamp": "2025-01-23T14:30:00.123456",
   "success": true,
   "duration_seconds": 45.67,
   "stats": {
     "added": 3,
     "updated": 2,
-    "skipped": 45,
+    "skipped": 25,
     "total_processed": 5
   },
-  "new_articles": ["url1", "url2", "url3"],
-  "updated_articles": ["url4", "url5"]
+  "config": {
+    "pages_to_crawl": 30,
+    "incremental_updates": true
+  },
+  "new_articles": ["https://support.optisigns.com/hc/en-us/articles/123"],
+  "updated_articles": ["https://support.optisigns.com/hc/en-us/articles/456"]
 }
 ```
 
-## Scheduled Execution
+## 🚀 Production Deployment
 
-The DigitalOcean job runs daily at 2 AM UTC and:
+The scraper is designed for DigitalOcean App Platform with daily scheduling:
 
-1. ✅ **Re-scrapes** all available articles
-2. ✅ **Detects changes** using content hashing and Last-Modified headers
-3. ✅ **Processes only delta** (new/updated articles)
-4. ✅ **Logs counts** of added, updated, and skipped articles
-5. ✅ **Saves artifacts** with detailed execution reports
+### Automated Deployment
+```bash
+chmod +x deploy.sh
+./deploy.sh
+```
 
-## Cost Optimization
+### Manual Deployment
+1. Update GitHub repository URL in `.do/app.yaml`
+2. Deploy: `doctl apps create .do/app.yaml`
+3. Monitor: DigitalOcean App Platform console
 
-- Uses smallest DigitalOcean instance (`basic-xxs`)
-- Runs only once per day
-- Efficient incremental processing
-- Estimated cost: ~$5-10/month
+### Scheduled Execution
+- **Frequency**: Daily at 2 AM UTC
+- **Duration**: ~1-2 minutes for incremental updates
+- **Cost**: ~$5-10/month on basic-xxs instance
+- **Monitoring**: Available via DigitalOcean console and artifacts
 
-## Links
+## 📈 Monitoring & Logs
 
-- **Job Logs**: Available in DigitalOcean App Platform console
-- **Run Artifacts**: Access via app URL `/artifacts/latest.json`
-- **GitHub Repository**: Update in `.do/app.yaml`
+- **Application Logs**: Available in DigitalOcean App Platform console
+- **Execution Artifacts**: JSON reports saved to `/artifacts/` with detailed metrics
+- **Health Monitoring**: Success/failure status in run artifacts
+- **Performance Tracking**: Duration, article counts, and error rates
 
-## Troubleshooting
+## 🔧 Troubleshooting
 
-1. **Deployment fails**: Check GitHub repository URL in `.do/app.yaml`
-2. **Job doesn't run**: Verify cron schedule format in app specification
-3. **Browser issues**: Ensure all Playwright dependencies are installed
-4. **Permission errors**: Check file permissions and user setup in Docker
+### Common Issues
+1. **No articles found**: Check website structure changes
+2. **Browser timeout**: Increase `TIMEOUT` environment variable
+3. **Permission errors**: Verify file system permissions in container
+4. **Deployment fails**: Confirm GitHub repository URL in `.do/app.yaml`
 
-## Support
+### Debug Mode
+Run with visible browser for debugging:
+```bash
+HEADLESS=false python main.py
+```
 
-For issues or questions:
-1. Check the logs in DigitalOcean console
-2. Review the run artifacts for detailed execution info
-3. Verify environment variables configuration
+## 🔗 Links
+
+- **Daily Job Logs**: [See main README for DigitalOcean links](#)
+- **Source Code**: Update GitHub URL in `.do/app.yaml`
+- **Monitoring Dashboard**: DigitalOcean App Platform console
